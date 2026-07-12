@@ -6,9 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { ArrowRight, FileText, Save, Plus } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { FileText, Plus } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { AdminPageHeader } from "@/components/admin/admin-page-header"
+import { useSaveHandler } from "@/hooks/use-save-handler"
+import { SaveButton } from "@/components/admin/save-button"
 
 interface AboutInfo {
   title: string
@@ -25,9 +27,8 @@ interface AboutInfo {
 }
 
 export function AboutManagement() {
-  const router = useRouter()
   const { toast } = useToast()
-  const [isLoading, setIsLoading] = useState(false)
+  const { isLoading, save } = useSaveHandler()
 
   const [aboutInfo, setAboutInfo] = useState<AboutInfo>({
     title: "درباره مجتمع تفریحی اقامتی دریاکنار بندر مقام",
@@ -59,25 +60,8 @@ export function AboutManagement() {
     }
   }, [])
 
-  const handleSave = async () => {
-    setIsLoading(true)
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      localStorage.setItem("aboutInfo", JSON.stringify(aboutInfo))
-
-      toast({
-        title: "موفق",
-        description: "اطلاعات درباره ما ذخیره شد",
-      })
-    } catch (error) {
-      toast({
-        title: "خطا",
-        description: "خطا در ذخیره اطلاعات",
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
-    }
+  const handleSave = () => {
+    save("aboutInfo", aboutInfo, "اطلاعات درباره ما ذخیره شد", "خطا در ذخیره اطلاعات")
   }
 
   const handleAddValue = () => {
@@ -129,15 +113,7 @@ export function AboutManagement() {
   return (
     <div className="space-y-6">
       {/* هدر */}
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowRight className="w-5 h-5" />
-        </Button>
-        <div className="flex items-center gap-2">
-          <FileText className="w-6 h-6 text-blue-600" />
-          <h1 className="text-2xl font-bold">مدیریت درباره ما</h1>
-        </div>
-      </div>
+      <AdminPageHeader icon={FileText} title="مدیریت درباره ما" />
 
       <div className="grid gap-6">
         {/* اطلاعات اصلی */}
@@ -309,12 +285,7 @@ export function AboutManagement() {
         </Card>
 
         {/* دکمه ذخیره */}
-        <div className="flex justify-end">
-          <Button onClick={handleSave} disabled={isLoading} className="bg-blue-600 hover:bg-blue-700">
-            <Save className="w-4 h-4 ml-2" />
-            {isLoading ? "در حال ذخیره..." : "ذخیره تغییرات"}
-          </Button>
-        </div>
+        <SaveButton onClick={handleSave} isLoading={isLoading} />
       </div>
     </div>
   )

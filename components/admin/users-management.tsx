@@ -7,9 +7,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowRight, Users, Plus, Edit, Trash2, Save, Eye, EyeOff } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { Users, Plus, Edit, Trash2, Save, Eye, EyeOff } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { AdminPageHeader } from "@/components/admin/admin-page-header"
 
 interface User {
   id: string
@@ -40,7 +40,6 @@ const permissions = [
 ]
 
 export function UsersManagement() {
-  const router = useRouter()
   const { toast } = useToast()
   const [users, setUsers] = useState<User[]>([])
   const [showAddForm, setShowAddForm] = useState(false)
@@ -260,15 +259,7 @@ export function UsersManagement() {
   return (
     <div className="space-y-6">
       {/* هدر */}
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowRight className="w-5 h-5" />
-        </Button>
-        <div className="flex items-center gap-2">
-          <Users className="w-6 h-6 text-blue-600" />
-          <h1 className="text-2xl font-bold">مدیریت کاربران</h1>
-        </div>
-      </div>
+      <AdminPageHeader icon={Users} title="مدیریت کاربران" />
 
       {/* دکمه افزودن کاربر */}
       {!showAddForm && (
