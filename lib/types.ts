@@ -12,10 +12,11 @@ export interface User {
 
 export interface AuthContextType {
   user: User | null
-  login: (username: string, password: string) => Promise<boolean>
+  login: (username: string, password: string, role?: User["role"]) => Promise<boolean>
   logout: () => void
   register: (userData: RegisterData) => Promise<boolean>
   isLoading: boolean
+  isInitialized: boolean
 }
 
 export interface RegisterData {
