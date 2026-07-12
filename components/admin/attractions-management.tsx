@@ -6,9 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { ArrowRight, MapPin, Plus, Trash2, Edit, Save, Star, X } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { MapPin, Plus, Trash2, Edit, Star, X } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { AdminPageHeader } from "@/components/admin/admin-page-header"
+import { useSaveHandler } from "@/hooks/use-save-handler"
+import { SaveButton } from "@/components/admin/save-button"
 
 interface Attraction {
   id: string
@@ -24,9 +26,8 @@ interface Attraction {
 }
 
 export function AttractionsManagement() {
-  const router = useRouter()
   const { toast } = useToast()
-  const [isLoading, setIsLoading] = useState(false)
+  const { isLoading, save } = useSaveHandler()
 
   const [attractions, setAttractions] = useState<Attraction[]>([
     {
@@ -244,39 +245,14 @@ export function AttractionsManagement() {
     setAttractions(attractions.map((item) => (item.id === id ? { ...item, active: !item.active } : item)))
   }
 
-  const handleSave = async () => {
-    setIsLoading(true)
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      localStorage.setItem("attractionsData", JSON.stringify(attractions))
-
-      toast({
-        title: "موفق",
-        description: "تغییرات جاذبه‌ها ذخیره شد",
-      })
-    } catch (error) {
-      toast({
-        title: "خطا",
-        description: "خطا در ذخیره تغییرات",
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
-    }
+  const handleSave = () => {
+    save("attractionsData", attractions, "تغییرات جاذبه‌ها ذخیره شد", "خطا در ذخیره تغییرات")
   }
 
   return (
     <div className="space-y-6">
       {/* هدر */}
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowRight className="w-5 h-5" />
-        </Button>
-        <div className="flex items-center gap-2">
-          <MapPin className="w-6 h-6 text-blue-600" />
-          <h1 className="text-2xl font-bold">مدیریت جاذبه‌ها</h1>
-        </div>
-      </div>
+      <AdminPageHeader icon={MapPin} title="مدیریت جاذبه‌ها" />
 
       {/* فرم اضافه کردن جاذبه جدید */}
       <Card>
@@ -528,12 +504,7 @@ export function AttractionsManagement() {
       </div>
 
       {/* دکمه ذخیره */}
-      <div className="flex justify-end">
-        <Button onClick={handleSave} disabled={isLoading} className="bg-blue-600 hover:bg-blue-700">
-          <Save className="w-4 h-4 ml-2" />
-          {isLoading ? "در حال ذخیره..." : "ذخیره تغییرات"}
-        </Button>
-      </div>
+      <SaveButton onClick={handleSave} isLoading={isLoading} />
     </div>
   )
 }

@@ -6,9 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { ArrowRight, Phone, MapPin, Plus, Trash2, Edit, Save } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { Phone, MapPin, Plus, Trash2, Edit, Save } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { AdminPageHeader } from "@/components/admin/admin-page-header"
+import { SaveButton } from "@/components/admin/save-button"
+import { useSaveHandler } from "@/hooks/use-save-handler"
 
 interface ContactCard {
   id: string
@@ -29,9 +31,8 @@ interface ContactInfo {
 }
 
 export function ContactInfoManagement() {
-  const router = useRouter()
   const { toast } = useToast()
-  const [isLoading, setIsLoading] = useState(false)
+  const { isLoading, save } = useSaveHandler()
   const [showAddCard, setShowAddCard] = useState(false)
   const [editingCard, setEditingCard] = useState<ContactCard | null>(null)
 
@@ -89,16 +90,7 @@ export function ContactInfoManagement() {
   }, [])
 
   const handleSave = () => {
-    setIsLoading(true)
-    localStorage.setItem("contactInfo", JSON.stringify(contactInfo))
-
-    setTimeout(() => {
-      setIsLoading(false)
-      toast({
-        title: "موفق",
-        description: "اطلاعات تماس ذخیره شد",
-      })
-    }, 500)
+    save("contactInfo", contactInfo, "اطلاعات تماس ذخیره شد")
   }
 
   const handleAddCard = () => {
@@ -204,15 +196,7 @@ export function ContactInfoManagement() {
   return (
     <div className="space-y-6">
       {/* هدر */}
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowRight className="w-5 h-5" />
-        </Button>
-        <div className="flex items-center gap-2">
-          <Phone className="w-6 h-6 text-blue-600" />
-          <h1 className="text-2xl font-bold">مدیریت اطلاعات تماس</h1>
-        </div>
-      </div>
+      <AdminPageHeader icon={Phone} title="مدیریت اطلاعات تماس" />
 
       {/* اطلاعات اصلی */}
       <Card>
@@ -390,12 +374,7 @@ export function ContactInfoManagement() {
       </Card>
 
       {/* دکمه ذخیره */}
-      <div className="flex justify-end">
-        <Button onClick={handleSave} disabled={isLoading} className="bg-blue-600 hover:bg-blue-700">
-          <Save className="w-4 h-4 ml-2" />
-          {isLoading ? "در حال ذخیره..." : "ذخیره تغییرات"}
-        </Button>
-      </div>
+      <SaveButton onClick={handleSave} isLoading={isLoading} />
     </div>
   )
 }

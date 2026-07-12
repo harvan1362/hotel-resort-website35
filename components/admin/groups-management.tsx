@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ArrowRight, Menu, Plus, Trash2, Edit, Save, Eye, EyeOff, Settings } from "lucide-react"
+import { Menu, Plus, Trash2, Edit, Save, Eye, EyeOff, Settings } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -33,6 +33,7 @@ import {
   Dumbbell,
   Sparkles,
 } from "lucide-react"
+import { AdminPageHeader } from "@/components/admin/admin-page-header"
 
 interface ServiceGroup {
   id: string
@@ -243,15 +244,7 @@ export function GroupsManagement() {
   return (
     <div className="space-y-6">
       {/* هدر */}
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowRight className="w-5 h-5" />
-        </Button>
-        <div className="flex items-center gap-2">
-          <Menu className="w-6 h-6 text-blue-600" />
-          <h1 className="text-2xl font-bold">مدیریت گروه‌ها</h1>
-        </div>
-      </div>
+      <AdminPageHeader icon={Menu} title="مدیریت گروه‌ها" />
 
       {/* دکمه افزودن گروه */}
       {!showAddForm && (

@@ -8,10 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { ArrowRight, Building, Save, Upload } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { Building, Upload } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { ImageIcon } from "lucide-react"
+import { AdminPageHeader } from "@/components/admin/admin-page-header"
+import { SaveButton } from "@/components/admin/save-button"
+import { useSaveHandler } from "@/hooks/use-save-handler"
 
 interface CompanyInfo {
   companyName: string
@@ -28,9 +30,8 @@ interface CompanyInfo {
 }
 
 export function CompanyInfoManagement() {
-  const router = useRouter()
   const { toast } = useToast()
-  const [isLoading, setIsLoading] = useState(false)
+  const { isLoading, save } = useSaveHandler()
   const logoInputRef = useRef<HTMLInputElement>(null)
   const iconInputRef = useRef<HTMLInputElement>(null)
 
@@ -87,42 +88,19 @@ export function CompanyInfoManagement() {
     }
   }
 
-  const handleSave = async () => {
-    setIsLoading(true)
-    try {
-      // شبیه‌سازی ذخیره در بک‌اند
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // ذخیره در localStorage برای نمایش در سایت
-      localStorage.setItem("companyInfo", JSON.stringify(companyInfo))
-
-      toast({
-        title: "موفق",
-        description: "اطلاعات شرکت با موفقیت ذخیره شد و در سایت اعمال خواهد شد",
-      })
-    } catch (error) {
-      toast({
-        title: "خطا",
-        description: "خطا در ذخیره اطلاعات",
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
-    }
+  const handleSave = () => {
+    save(
+      "companyInfo",
+      companyInfo,
+      "اطلاعات شرکت با موفقیت ذخیره شد و در سایت اعمال خواهد شد",
+      "خطا در ذخیره اطلاعات",
+    )
   }
 
   return (
     <div className="space-y-6">
       {/* هدر */}
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowRight className="w-5 h-5" />
-        </Button>
-        <div className="flex items-center gap-2">
-          <Building className="w-6 h-6 text-blue-600" />
-          <h1 className="text-2xl font-bold">اطلاعات شرکت</h1>
-        </div>
-      </div>
+      <AdminPageHeader icon={Building} title="اطلاعات شرکت" />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* اطلاعات اصلی */}
@@ -321,12 +299,7 @@ export function CompanyInfoManagement() {
       </div>
 
       {/* دکمه ذخیره */}
-      <div className="flex justify-end">
-        <Button onClick={handleSave} disabled={isLoading} className="bg-green-600 hover:bg-green-700">
-          <Save className="w-4 h-4 ml-2" />
-          {isLoading ? "در حال ذخیره..." : "ذخیره تغییرات"}
-        </Button>
-      </div>
+      <SaveButton onClick={handleSave} isLoading={isLoading} className="bg-green-600 hover:bg-green-700" />
     </div>
   )
 }
