@@ -45,6 +45,7 @@ export default function AdminLoginPage() {
         })
       }
     } catch (error) {
+      console.error("Admin login error:", error)
       toast({
         title: "خطا در ورود",
         description: "مشکلی در ورود به سیستم رخ داده است",

@@ -255,6 +255,7 @@ export function AttractionsManagement() {
         description: "تغییرات جاذبه‌ها ذخیره شد",
       })
     } catch (error) {
+      console.error("Error saving attractions changes:", error)
       toast({
         title: "خطا",
         description: "خطا در ذخیره تغییرات",

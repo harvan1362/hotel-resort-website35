@@ -106,6 +106,7 @@ export function SliderManagement() {
         description: "تغییرات اسلایدر ذخیره شد",
       })
     } catch (error) {
+      console.error("Error saving slider changes:", error)
       toast({
         title: "خطا",
         description: "خطا در ذخیره تغییرات",

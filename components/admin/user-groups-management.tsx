@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Plus, Edit, Trash2, Save, X } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { safeJsonParse } from "@/lib/utils"
 
 interface UserGroup {
   id: string
@@ -42,8 +43,9 @@ export function UserGroupsManagement() {
 
   useEffect(() => {
     const savedGroups = localStorage.getItem("userGroups")
-    if (savedGroups) {
-      setGroups(JSON.parse(savedGroups))
+    const parsedGroups = savedGroups ? safeJsonParse<UserGroup[] | null>(savedGroups, null, "userGroups") : null
+    if (parsedGroups) {
+      setGroups(parsedGroups)
     } else {
       // گروه‌های پیش‌فرض
       const defaultGroups: UserGroup[] = [

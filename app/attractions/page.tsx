@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Star, X, Home } from "lucide-react"
 import Link from "next/link"
+import { safeJsonParse } from "@/lib/utils"
 
 interface Attraction {
   id: string
@@ -95,8 +96,10 @@ export default function AttractionsPage() {
   useEffect(() => {
     const savedAttractions = localStorage.getItem("attractionsData")
     if (savedAttractions) {
-      const parsedAttractions: Attraction[] = JSON.parse(savedAttractions)
-      setAttractions(parsedAttractions.filter((attraction) => attraction.active))
+      const parsedAttractions = safeJsonParse<Attraction[] | null>(savedAttractions, null, "attractionsData")
+      if (parsedAttractions) {
+        setAttractions(parsedAttractions.filter((attraction) => attraction.active))
+      }
     }
   }, [])
 

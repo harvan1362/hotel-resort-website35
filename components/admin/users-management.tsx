@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowRight, Users, Plus, Edit, Trash2, Save, Eye, EyeOff } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
+import { safeJsonParse } from "@/lib/utils"
 
 interface User {
   id: string
@@ -60,8 +61,9 @@ export function UsersManagement() {
   // بارگذاری کاربران از localStorage
   useEffect(() => {
     const savedUsers = localStorage.getItem("users")
-    if (savedUsers) {
-      setUsers(JSON.parse(savedUsers))
+    const parsedUsers = savedUsers ? safeJsonParse<User[] | null>(savedUsers, null, "users") : null
+    if (parsedUsers) {
+      setUsers(parsedUsers)
     } else {
       // کاربران پیش‌فرض
       const defaultUsers: User[] = [

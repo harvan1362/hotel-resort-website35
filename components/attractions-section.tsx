@@ -171,7 +171,7 @@ export function AttractionsSection() {
         console.log("[v0] Active attractions found:", activeAttractions.length)
         setAttractions(activeAttractions)
       } catch (error) {
-        console.log("[v0] Error parsing attractions from localStorage:", error)
+        console.error("[v0] Error parsing attractions from localStorage:", error)
         setAttractions(defaultAttractions)
       }
     } else {

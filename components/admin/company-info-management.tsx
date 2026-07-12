@@ -101,6 +101,7 @@ export function CompanyInfoManagement() {
         description: "اطلاعات شرکت با موفقیت ذخیره شد و در سایت اعمال خواهد شد",
       })
     } catch (error) {
+      console.error("Error saving company info:", error)
       toast({
         title: "خطا",
         description: "خطا در ذخیره اطلاعات",

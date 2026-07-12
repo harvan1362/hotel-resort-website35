@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { ArrowRight, Phone, MapPin, Plus, Trash2, Edit, Save } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
+import { safeJsonParse } from "@/lib/utils"
 
 interface ContactCard {
   id: string
@@ -84,7 +85,10 @@ export function ContactInfoManagement() {
   useEffect(() => {
     const savedContactInfo = localStorage.getItem("contactInfo")
     if (savedContactInfo) {
-      setContactInfo(JSON.parse(savedContactInfo))
+      const parsed = safeJsonParse<ContactInfo | null>(savedContactInfo, null, "contactInfo")
+      if (parsed) {
+        setContactInfo(parsed)
+      }
     }
   }, [])
 

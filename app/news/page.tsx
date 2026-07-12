@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, ArrowLeft, X, Home } from "lucide-react"
 import Link from "next/link"
+import { safeJsonParse } from "@/lib/utils"
 
 interface NewsItem {
   id: string
@@ -86,8 +87,10 @@ export default function NewsPage() {
   useEffect(() => {
     const savedNews = localStorage.getItem("newsData")
     if (savedNews) {
-      const parsedNews: NewsItem[] = JSON.parse(savedNews)
-      setNews(parsedNews.filter((item) => item.active))
+      const parsedNews = safeJsonParse<NewsItem[] | null>(savedNews, null, "newsData")
+      if (parsedNews) {
+        setNews(parsedNews.filter((item) => item.active))
+      }
     }
   }, [])
 
