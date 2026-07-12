@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -88,7 +88,24 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const [expandedItems, setExpandedItems] = useState<string[]>([])
   const pathname = usePathname()
   const router = useRouter()
-  const { logout } = useAuth()
+  const { user, logout, isInitialized } = useAuth()
+
+  // محافظت از پنل مدیریت: فقط کاربران ادمین مجاز به دسترسی هستند
+  const isAuthorized = user?.role === "admin"
+
+  useEffect(() => {
+    if (isInitialized && !isAuthorized) {
+      router.replace("/admin-login")
+    }
+  }, [isInitialized, isAuthorized, router])
+
+  if (!isInitialized || !isAuthorized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <p className="text-gray-600">لطفاً منتظر بمانید...</p>
+      </div>
+    )
+  }
 
   const toggleExpanded = (title: string) => {
     setExpandedItems((prev) => (prev.includes(title) ? prev.filter((item) => item !== title) : [...prev, title]))

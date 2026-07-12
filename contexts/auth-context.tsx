@@ -5,6 +5,9 @@ import type { User, AuthContextType, RegisterData } from "@/lib/types"
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+// رمز عبور نمونه برای بک‌اند شبیه‌سازی‌شده؛ در پروژه واقعی باید حذف شود
+const DEMO_PASSWORD = "123456"
+
 // Mock API functions - در پروژه واقعی با بک‌اند Flask/SQLite جایگزین می‌شود
 const mockUsers: User[] = [
   {
@@ -31,12 +34,17 @@ const mockUsers: User[] = [
   },
 ]
 
-const mockLogin = async (username: string, password: string): Promise<User | null> => {
+const mockLogin = async (
+  username: string,
+  password: string,
+  role?: User["role"],
+): Promise<User | null> => {
   // شبیه‌سازی تاخیر شبکه
   await new Promise((resolve) => setTimeout(resolve, 1000))
 
   const user = mockUsers.find((u) => u.username === username)
-  if (user && password === "123456") {
+  // اعتبارسنجی رمز عبور و نقش کاربر
+  if (user && password === DEMO_PASSWORD && (!role || user.role === role)) {
     return { ...user, lastLogin: new Date().toISOString() }
   }
   return null
@@ -63,19 +71,27 @@ const mockRegister = async (userData: RegisterData): Promise<User> => {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isInitialized, setIsInitialized] = useState(false)
 
   useEffect(() => {
     // بررسی وجود کاربر در localStorage
-    const savedUser = localStorage.getItem("user")
-    if (savedUser) {
-      setUser(JSON.parse(savedUser))
+    try {
+      const savedUser = localStorage.getItem("user")
+      if (savedUser) {
+        setUser(JSON.parse(savedUser))
+      }
+    } catch (error) {
+      console.error("Failed to restore session:", error)
+      localStorage.removeItem("user")
+    } finally {
+      setIsInitialized(true)
     }
   }, [])
 
-  const login = async (username: string, password: string): Promise<boolean> => {
+  const login = async (username: string, password: string, role?: User["role"]): Promise<boolean> => {
     setIsLoading(true)
     try {
-      const loggedInUser = await mockLogin(username, password)
+      const loggedInUser = await mockLogin(username, password, role)
       if (loggedInUser) {
         setUser(loggedInUser)
         localStorage.setItem("user", JSON.stringify(loggedInUser))
@@ -113,7 +129,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("user")
   }
 
-  return <AuthContext.Provider value={{ user, login, logout, register, isLoading }}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={{ user, login, logout, register, isLoading, isInitialized }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export function useAuth() {
