@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { ArrowRight, FileText, Save, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
+import { safeJsonParse } from "@/lib/utils"
 
 interface AboutInfo {
   title: string
@@ -55,7 +56,10 @@ export function AboutManagement() {
   useEffect(() => {
     const savedAboutInfo = localStorage.getItem("aboutInfo")
     if (savedAboutInfo) {
-      setAboutInfo(JSON.parse(savedAboutInfo))
+      const parsed = safeJsonParse<AboutInfo | null>(savedAboutInfo, null, "aboutInfo")
+      if (parsed) {
+        setAboutInfo(parsed)
+      }
     }
   }, [])
 
@@ -70,6 +74,7 @@ export function AboutManagement() {
         description: "اطلاعات درباره ما ذخیره شد",
       })
     } catch (error) {
+      console.error("Error saving about info:", error)
       toast({
         title: "خطا",
         description: "خطا در ذخیره اطلاعات",

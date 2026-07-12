@@ -103,6 +103,7 @@ export function NewsManagement() {
         description: "تغییرات اخبار ذخیره شد",
       })
     } catch (error) {
+      console.error("Error saving news changes:", error)
       toast({
         title: "خطا",
         description: "خطا در ذخیره تغییرات",

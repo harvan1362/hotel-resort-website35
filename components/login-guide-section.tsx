@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Calendar, MessageCircle, Camera, X } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
+import { safeJsonParse } from "@/lib/utils"
 
 export function LoginGuideSection() {
   const [showForm, setShowForm] = useState<
@@ -45,7 +46,7 @@ export function LoginGuideSection() {
     }
 
     // چک کردن تکراری بودن نام کاربری (mock data)
-    const existingUsers = JSON.parse(localStorage.getItem("registeredUsers") || "[]")
+    const existingUsers = safeJsonParse<any[]>(localStorage.getItem("registeredUsers"), [], "registeredUsers")
     if (existingUsers.some((user: any) => user.username === username)) {
       return "این نام کاربری قبلاً استفاده شده است"
     }
@@ -169,7 +170,7 @@ export function LoginGuideSection() {
             })
           }
         } else {
-          const existingUsers = JSON.parse(localStorage.getItem("registeredUsers") || "[]")
+          const existingUsers = safeJsonParse<any[]>(localStorage.getItem("registeredUsers"), [], "registeredUsers")
           const newUser = {
             id: Date.now(),
             name: formData.name,
@@ -211,7 +212,7 @@ export function LoginGuideSection() {
             })
           }
         } else {
-          const existingUsers = JSON.parse(localStorage.getItem("registeredUsers") || "[]")
+          const existingUsers = safeJsonParse<any[]>(localStorage.getItem("registeredUsers"), [], "registeredUsers")
           const newUser = {
             id: Date.now(),
             name: formData.name,
@@ -236,6 +237,7 @@ export function LoginGuideSection() {
         }
       }
     } catch (error) {
+      console.error("Error submitting registration/login form:", error)
       toast({
         title: "خطا در سیستم",
         description: "مشکلی در ارسال اطلاعات رخ داد. لطفاً دوباره تلاش کنید.",

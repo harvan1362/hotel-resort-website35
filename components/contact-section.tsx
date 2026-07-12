@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Phone, MapPin, Clock } from "lucide-react"
 import { useState, useEffect } from "react"
+import { safeJsonParse } from "@/lib/utils"
 
 interface ContactCard {
   id: string
@@ -29,7 +30,10 @@ export function ContactSection() {
   useEffect(() => {
     const savedContactInfo = localStorage.getItem("contactInfo")
     if (savedContactInfo) {
-      setContactData(JSON.parse(savedContactInfo))
+      const parsed = safeJsonParse<ContactInfo | null>(savedContactInfo, null, "contactInfo")
+      if (parsed) {
+        setContactData(parsed)
+      }
     }
   }, [])
 

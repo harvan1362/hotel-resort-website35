@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowRight, Plus, Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
+import { safeJsonParse } from "@/lib/utils"
 
 interface FooterLink {
   id: string
@@ -71,7 +72,10 @@ export function FooterManagement() {
   useEffect(() => {
     const savedFooter = localStorage.getItem("footerData")
     if (savedFooter) {
-      setFooterData(JSON.parse(savedFooter))
+      const parsed = safeJsonParse<FooterData | null>(savedFooter, null, "footerData")
+      if (parsed) {
+        setFooterData(parsed)
+      }
     }
   }, [])
 

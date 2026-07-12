@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import type { User, AuthContextType, RegisterData } from "@/lib/types"
+import { safeJsonParse } from "@/lib/utils"
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
@@ -68,7 +69,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // بررسی وجود کاربر در localStorage
     const savedUser = localStorage.getItem("user")
     if (savedUser) {
-      setUser(JSON.parse(savedUser))
+      const parsedUser = safeJsonParse<User | null>(savedUser, null, "user")
+      if (parsedUser) {
+        setUser(parsedUser)
+      } else {
+        // پاک کردن داده‌ی خراب تا از خطاهای بعدی جلوگیری شود
+        localStorage.removeItem("user")
+      }
     }
   }, [])
 

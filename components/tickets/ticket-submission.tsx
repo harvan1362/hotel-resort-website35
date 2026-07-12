@@ -72,6 +72,7 @@ export function TicketSubmission() {
         priority: "medium",
       })
     } catch (error) {
+      console.error("Error submitting ticket:", error)
       toast({
         title: "خطا در ارسال",
         description: "لطفاً دوباره تلاش کنید",

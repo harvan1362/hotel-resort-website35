@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowRight, Settings, Plus, Trash2, Edit, Save, DollarSign } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
+import { safeJsonParse } from "@/lib/utils"
 
 interface Service {
   id: string
@@ -75,8 +76,8 @@ export function ServicesManagement() {
   // بارگذاری گروه‌های فعال از localStorage
   useEffect(() => {
     const savedGroups = localStorage.getItem("serviceGroups")
-    if (savedGroups) {
-      const groups: ServiceGroup[] = JSON.parse(savedGroups)
+    const groups = savedGroups ? safeJsonParse<ServiceGroup[] | null>(savedGroups, null, "serviceGroups") : null
+    if (groups) {
       setActiveGroups(groups.filter((group) => group.active))
     } else {
       // گروه‌های پیش‌فرض
@@ -165,6 +166,7 @@ export function ServicesManagement() {
         description: "تغییرات خدمات ذخیره شد",
       })
     } catch (error) {
+      console.error("Error saving services changes:", error)
       toast({
         title: "خطا",
         description: "خطا در ذخیره تغییرات",
